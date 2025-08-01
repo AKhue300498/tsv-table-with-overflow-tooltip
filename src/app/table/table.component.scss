@@ -1,0 +1,255 @@
+.table-container {
+  padding: 24px;
+  background: #fafafa;
+  min-height: 100vh;
+}
+
+.table-header {
+  margin-bottom: 32px;
+
+  .header-content {
+    margin-bottom: 24px;
+  }
+
+  .table-title {
+    font-size: 28px;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin: 0 0 8px 0;
+  }
+
+  .table-description {
+    font-size: 16px;
+    color: #666;
+    margin: 0;
+    line-height: 1.5;
+  }
+}
+
+.table-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+
+  .search-field {
+    flex: 1;
+    min-width: 300px;
+    max-width: 500px;
+  }
+
+  .table-stats {
+    .stats-text {
+      font-size: 14px;
+      color: #666;
+      font-weight: 500;
+    }
+  }
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px;
+  gap: 16px;
+
+  p {
+    color: #666;
+    font-size: 16px;
+  }
+}
+
+.table-wrapper {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.employee-table {
+  width: 100%;
+
+  .mat-mdc-header-cell {
+    background: #f8f9fa;
+    font-weight: 600;
+    color: #374151;
+    border-bottom: 2px solid #e5e7eb;
+  }
+
+  .mat-mdc-cell {
+    border-bottom: 1px solid #f3f4f6;
+    padding: 16px 8px;
+  }
+
+  .table-row {
+    transition: background-color 0.2s ease;
+
+    &:hover {
+      background-color: #f9fafb;
+    }
+  }
+}
+
+// Column specific styles
+.avatar-column {
+  width: 60px;
+  text-align: center;
+
+  .employee-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #e5e7eb;
+  }
+}
+
+.truncate-cell {
+  max-width: 200px;
+
+  .cell-content {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: default;
+  }
+
+  &:hover .cell-content {
+    background-color: rgba(59, 130, 246, 0.05);
+    border-radius: 4px;
+    padding: 2px 4px;
+    margin: -2px -4px;
+  }
+}
+
+.name-cell {
+  max-width: 180px;
+
+  .employee-name {
+    font-weight: 500;
+    color: #1f2937;
+  }
+}
+
+.email-cell {
+  max-width: 250px;
+
+  .email-link {
+    color: #3b82f6;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.position-cell {
+  max-width: 220px;
+}
+
+.phone-cell {
+  max-width: 140px;
+
+  .phone-link {
+    color: #059669;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.address-cell {
+  max-width: 250px;
+}
+
+.notes-cell {
+  max-width: 300px;
+}
+
+.status-cell {
+  .status-badge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+
+    &.status-active {
+      background-color: #d1fae5;
+      color: #065f46;
+    }
+
+    &.status-inactive {
+      background-color: #fee2e2;
+      color: #991b1b;
+    }
+
+    &.status-pending {
+      background-color: #fef3c7;
+      color: #92400e;
+    }
+
+    &.status-on-leave {
+      background-color: #e0e7ff;
+      color: #3730a3;
+    }
+  }
+}
+
+.salary-cell {
+  .salary-amount {
+    font-weight: 600;
+    color: #059669;
+    font-family: 'Courier New', monospace;
+  }
+}
+
+.date-cell {
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.actions-column {
+  width: 60px;
+  text-align: center;
+}
+
+.department-chip {
+  font-size: 12px;
+  height: 24px;
+  background-color: #e0f2fe;
+  color: #0277bd;
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .table-container {
+    padding: 16px;
+  }
+
+  .table-controls {
+    flex-direction: column;
+    align-items: stretch;
+
+    .search-field {
+      min-width: unset;
+      max-width: unset;
+    }
+  }
+
+  .truncate-cell {
+    max-width: 120px;
+  }
+}
+
+// Global tooltip panel styles
+::ng-deep .custom-tooltip-panel {
+  pointer-events: none;
+}
