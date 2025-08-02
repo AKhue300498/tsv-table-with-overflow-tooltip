@@ -3,9 +3,6 @@ import {
   ElementRef,
   OnDestroy,
   OnInit,
-  Renderer2,
-  ViewContainerRef,
-  ComponentRef,
   Injector,
   NgZone,
   inject,
@@ -103,6 +100,8 @@ export class LazyOverflowTooltipDirective implements OnInit, OnDestroy {
   private handleHoverLeave(): void {
     if (this.tooltipComponent) {
       this.tooltipComponent.hide();
+      this.destroyTooltip();
+      this.disconnectResizeObserver();
     }
   }
 
