@@ -15,6 +15,11 @@ import {
   main,
 } from './generator';
 import { LazyOverflowTooltipDirective } from './tooltip-advance.directive';
+import { TableVirtualScrollModule } from 'ng-table-virtual-scroll';
+import {
+  CdkVirtualScrollViewport,
+  ScrollingModule,
+} from '@angular/cdk/scrolling';
 
 // Interface for the original nested data structure
 interface NestedTableNode {
@@ -363,12 +368,11 @@ const NESTED_TABLE_DATA: NestedTableNode[] = [
     MatPaginator,
     MatSort,
     CommonModule,
-    // TableVirtualScrollModule,
-    // LazyOverflowTooltipDirective,
-    // CdkVirtualScrollViewport,
-    // ScrollingModule,
-    MatFormFieldModule,
+    TableVirtualScrollModule,
     LazyOverflowTooltipDirective,
+    CdkVirtualScrollViewport,
+    ScrollingModule,
+    MatFormFieldModule,
   ],
   standalone: true,
   template: `
@@ -379,110 +383,111 @@ const NESTED_TABLE_DATA: NestedTableNode[] = [
         placeholder="Search by name, category, or status..."
       />
       <div class="mat-elevation-8">
-        <table mat-table [dataSource]="dataSource" class="nested-table">
-          <!-- Name Column with Tree Structure -->
-          <ng-container matColumnDef="name">
-            <th mat-header-cell *matHeaderCellDef>Name</th>
-            <td
-              mat-cell
-              *matCellDef="let element"
-              [style.padding-left.px]="element.level * 20 + 16"
-              class="name-cell"
-            >
-              <button
-                mat-icon-button
-                *ngIf="element.expandable"
-                matTreeNodeToggle
-                (click)="toggleNode(element)"
-                [attr.aria-label]="'Toggle ' + element.name"
-              ></button>
-              <span *ngIf="!element.expandable" class="spacer"></span>
-
-              <mat-icon
-                class="category-icon"
-                [ngClass]="{
-                  category: element.category === 'Category',
-                  subcategory: element.category === 'Subcategory',
-                  product: element.category === 'Product',
-                }"
+        <cdk-virtual-scroll-viewport [tvsItemSize]="18" style="height:1000px">
+          <table mat-table [dataSource]="dataSource" class="nested-table">
+            <!-- Name Column with Tree Structure -->
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef>Name</th>
+              <td
+                mat-cell
+                *matCellDef="let element"
+                [style.padding-left.px]="element.level * 20 + 16"
+                class="name-cell"
               >
-                {{ getCategoryIcon(element.category) }}
-              </mat-icon>
+                <button
+                  mat-icon-button
+                  *ngIf="element.expandable"
+                  matTreeNodeToggle
+                  (click)="toggleNode(element)"
+                  [attr.aria-label]="'Toggle ' + element.name"
+                ></button>
+                <span *ngIf="!element.expandable" class="spacer"></span>
 
-              <span class="element-name" appLazyOverflowTooltip>{{
-                element.name
-              }}</span>
-            </td>
-          </ng-container>
+                <mat-icon
+                  class="category-icon"
+                  [ngClass]="{
+                    category: element.category === 'Category',
+                    subcategory: element.category === 'Subcategory',
+                    product: element.category === 'Product',
+                  }"
+                >
+                  {{ getCategoryIcon(element.category) }}
+                </mat-icon>
 
-          <!-- Category Column -->
-          <ng-container matColumnDef="category">
-            <th mat-header-cell *matHeaderCellDef>Category</th>
-            <td mat-cell *matCellDef="let element">
-              <span
-                class="category-badge"
-                [ngClass]="element.category.toLowerCase()"
-              >
-                {{ element.category }}
-              </span>
-            </td>
-          </ng-container>
+                <span class="element-name" appLazyOverflowTooltip>{{
+                  element.name
+                }}</span>
+              </td>
+            </ng-container>
 
-          <!-- Price Column -->
-          <ng-container matColumnDef="price">
-            <th mat-header-cell *matHeaderCellDef>Price</th>
-            <td mat-cell *matCellDef="let element">
-              <span *ngIf="element.price !== null" class="price">
-                \${{ element.price | number: '1.2-2' }}
-              </span>
-              <span *ngIf="element.price === null" class="no-data">-</span>
-            </td>
-          </ng-container>
+            <!-- Category Column -->
+            <ng-container matColumnDef="category">
+              <th mat-header-cell *matHeaderCellDef>Category</th>
+              <td mat-cell *matCellDef="let element">
+                <span
+                  class="category-badge"
+                  [ngClass]="element.category.toLowerCase()"
+                >
+                  {{ element.category }}
+                </span>
+              </td>
+            </ng-container>
 
-          <!-- Quantity Column -->
-          <ng-container matColumnDef="quantity">
-            <th mat-header-cell *matHeaderCellDef>Quantity</th>
-            <td mat-cell *matCellDef="let element">
-              <span
-                *ngIf="element.quantity !== null"
-                class="quantity"
-                [ngClass]="{
-                  'low-stock': element.quantity > 0 && element.quantity <= 15,
-                  'out-of-stock': element.quantity === 0,
-                }"
-              >
-                {{ element.quantity }}
-              </span>
-              <span *ngIf="element.quantity === null" class="no-data">-</span>
-            </td>
-          </ng-container>
+            <!-- Price Column -->
+            <ng-container matColumnDef="price">
+              <th mat-header-cell *matHeaderCellDef>Price</th>
+              <td mat-cell *matCellDef="let element">
+                <span *ngIf="element.price !== null" class="price">
+                  \${{ element.price | number: '1.2-2' }}
+                </span>
+                <span *ngIf="element.price === null" class="no-data">-</span>
+              </td>
+            </ng-container>
 
-          <!-- Status Column -->
-          <ng-container matColumnDef="status">
-            <th mat-header-cell *matHeaderCellDef>Status</th>
-            <td mat-cell *matCellDef="let element">
-              <span
-                class="status-badge"
-                [ngClass]="getStatusClass(element.status)"
-              >
-                {{ element.status }}
-              </span>
-            </td>
-          </ng-container>
+            <!-- Quantity Column -->
+            <ng-container matColumnDef="quantity">
+              <th mat-header-cell *matHeaderCellDef>Quantity</th>
+              <td mat-cell *matCellDef="let element">
+                <span
+                  *ngIf="element.quantity !== null"
+                  class="quantity"
+                  [ngClass]="{
+                    'low-stock': element.quantity > 0 && element.quantity <= 15,
+                    'out-of-stock': element.quantity === 0,
+                  }"
+                >
+                  {{ element.quantity }}
+                </span>
+                <span *ngIf="element.quantity === null" class="no-data">-</span>
+              </td>
+            </ng-container>
 
-          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-          <tr
-            mat-row
-            *matRowDef="let row; columns: displayedColumns"
-            [ngClass]="{
-              'category-row': row.category === 'Category',
-              'subcategory-row': row.category === 'Subcategory',
-              'product-row': row.category === 'Product',
-            }"
-          ></tr>
-        </table>
+            <!-- Status Column -->
+            <ng-container matColumnDef="status">
+              <th mat-header-cell *matHeaderCellDef>Status</th>
+              <td mat-cell *matCellDef="let element">
+                <span
+                  class="status-badge"
+                  [ngClass]="getStatusClass(element.status)"
+                >
+                  {{ element.status }}
+                </span>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr
+              mat-row
+              *matRowDef="let row; columns: displayedColumns"
+              [ngClass]="{
+                'category-row': row.category === 'Category',
+                'subcategory-row': row.category === 'Subcategory',
+                'product-row': row.category === 'Product',
+              }"
+            ></tr>
+          </table>
+        </cdk-virtual-scroll-viewport>
       </div>
-
       <div class="table-actions">
         <button mat-raised-button color="primary" (click)="expandAll()">
           Expand All

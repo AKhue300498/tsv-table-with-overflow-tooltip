@@ -8,6 +8,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import {
   BehaviorSubject,
   Observable,
+  ReplaySubject,
   Subject,
   Subscription,
   combineLatest,
@@ -48,7 +49,14 @@ export class FlatTableDataSource<
   _renderChangesSubscription: Subscription | null = null;
 
   private readonly _flattenedData = new BehaviorSubject<F[]>([]);
-  private readonly _expandedData = new BehaviorSubject<F[]>([]); /**
+
+  private readonly _expandedData = new BehaviorSubject<F[]>([]);
+
+  public dataToRender$: Subject<F[]> = new Subject();
+  public dataOfRange$: Subject<F[]> = new Subject();
+  private streamsReady!: boolean;
+
+  /**
    * The filtered set of data that has been matched by the filter string, or all the data if there
    * is no filter. Useful for knowing the set of data the table represents.
    * For example, a 'selectAll()' function would likely want to select the set of filtered data
@@ -254,6 +262,7 @@ export class FlatTableDataSource<
    * the provided base data and send it to the table for rendering.
    */
   _updateChangeSubscription() {
+    this.initStreams();
     const sortChange: Observable<Sort | null | void> = this._sort
       ? (merge(
           this._sort.sortChange,
@@ -299,6 +308,14 @@ export class FlatTableDataSource<
     this._renderChangesSubscription?.unsubscribe();
     this._renderChangesSubscription = paginatedData.subscribe((data) =>
       this._renderData.next(data as F[]),
+    );
+
+    this._renderChangesSubscription.add(
+      paginatedData.subscribe((data) => this.dataToRender$.next(data)),
+    );
+
+    this._renderChangesSubscription.add(
+      this.dataOfRange$.subscribe((data) => this._renderData.next(data)),
     );
   }
 
@@ -393,6 +410,13 @@ export class FlatTableDataSource<
     return this._renderData;
   }
 
+  private initStreams() {
+    if (!this.streamsReady) {
+      this.dataToRender$ = new ReplaySubject<F[]>(1);
+      this.dataOfRange$ = new ReplaySubject<F[]>(1);
+      this.streamsReady = true;
+    }
+  }
   /**
    * Used by the MatTable. Called when it disconnects from the data source.
    * @docs-private
